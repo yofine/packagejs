@@ -58,7 +58,7 @@ module.exports = {
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.NoErrorsPlugin(),
     new ExtractTextPlugin("css/[name].css"),
-    new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } }) } })
+    new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } })
     new webpack.ResolverPlugin([
       new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin("package.json", ["main"]),
     ]),
