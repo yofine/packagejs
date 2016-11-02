@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { CodeEditer } from '../../components'
-import { updatePackage } from './redux/package'
+import { CodeEditer, DeferInput } from '../../components'
+import { updatePackage, removePackage } from './redux/package'
 import './PackageEditor.less'
 
 const mapStateToProps = (state, ownProps) => {
@@ -21,12 +21,18 @@ export default class PackageEditor extends Component {
     const { dispatch, params } = this.props
     dispatch(updatePackage(data, {id: params.packageId}))
   }
-  onChange = (a) => {
-    this.updatePackage({content: a.doc.getValue()})
+
+  onCodeChange = (cm) => {
+    this.updatePackage({content: cm.doc.getValue()})
   }
 
-  onTitleChange = (e) => {
-    this.updatePackage({title: e.currentTarget.value })
+  onTitleChange = (value) => {
+    this.updatePackage({title: value })
+  }
+
+  onRemovePackage = () => {
+    const { params, dispatch } = this.props
+    dispatch(removePackage({id: params.packageId}))
   }
 
   render() {
@@ -40,11 +46,11 @@ export default class PackageEditor extends Component {
     return (
       <div className="container">
         <h1>
-          <input
-            className="title-input"
+          <DeferInput
             placeholder="untitled package.json"
             value={currentPackage.get('title')}
             onChange={this.onTitleChange}
+            defer={500}
           />
           <span className="pull-right">
           {
@@ -55,7 +61,8 @@ export default class PackageEditor extends Component {
 
           </span>
         </h1>
-        <CodeEditer value={currentPackage.get('content')} onChange={this.onChange} />
+        <CodeEditer value={currentPackage.get('content')} onCodeChange={this.onCodeChange} />
+        <button onClick={this.onRemovePackage} className="btn btn-success">destroy</button>
       </div>
     )
   }

@@ -11,7 +11,6 @@ export default class PackageList extends Component {
   renderPackagePreview = (list) => {
     const prefix = this.props.prefix
     const preview = function(item) {
-      console.log(item.updatedAt)
       return (
         <li key={item.id}>
           <div className="package-preview">

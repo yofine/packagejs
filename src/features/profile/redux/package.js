@@ -1,6 +1,7 @@
 import lean from 'leancloud-storage'
 import createReducer from '../../../util/createReducer'
 import { push } from 'react-router-redux'
+import { initalPackage } from './initalPackage'
 
 import {
   FETCH_PACKAGE_REQUEST,
@@ -12,6 +13,9 @@ import {
   UPDATE_PACKAGE_REQUEST,
   UPDATE_PACKAGE_SUCCESS,
   UPDATE_PACKAGE_FAILURE,
+  REMOVE_PACKAGE_REQUEST,
+  REMOVE_PACKAGE_SUCCESS,
+  REMOVE_PACKAGE_FAILURE,
 } from './constants'
 
 export const fetchPackage = (params={}) => {
@@ -40,7 +44,7 @@ export const createPackage = () => {
     const p = new P()
     try {
       const currentUser = lean.User.current()
-      const ret = await p.save()
+      const ret = await p.save({content: initalPackage})
       dispatch(push(`/${currentUser.attributes.username}/${ret.id}`))
       dispatch({
         type: CREATE_PACKAGE_SUCCESS,
@@ -79,6 +83,29 @@ export const updatePackage = (data, params) => {
   }
 }
 
+export const removePackage = (params) => {
+  return async dispatch => {
+    dispatch({type: UPDATE_PACKAGE_REQUEST})
+    const p = lean.Object.createWithoutData('package', params.id)
+    try {
+      const ret = await p.destroy()
+      dispatch({
+        type: REMOVE_PACKAGE_SUCCESS,
+        data: ret
+      })
+      const currentUser = lean.User.current()
+      dispatch(push(`/${currentUser.attributes.username}`))
+    } catch(error) {
+      dispatch({
+        type: REMOVE_PACKAGE_FAILURE,
+        data: error
+      })
+    }
+  }
+}
+
+
+
 const initialState = {
   data: null,
   error: null,
@@ -104,6 +131,28 @@ export const packageReducer = createReducer(initialState, {
     }
   },
   [FETCH_PACKAGE_FAILURE](state, action) {
+    return {
+      ...state,
+      pending: false,
+      error: action.data.error,
+    }
+  },
+  [CREATE_PACKAGE_REQUEST](state, action) {
+    return {
+      ...state,
+      pending: true,
+      error: null,
+    }
+  },
+  [CREATE_PACKAGE_SUCCESS](state, action) {
+    state.data.push(action.data)
+    return {
+      ...state,
+      pending: false,
+      error: null,
+    }
+  },
+  [CREATE_PACKAGE_FAILURE](state, action) {
     return {
       ...state,
       pending: false,
@@ -138,6 +187,29 @@ export const packageReducer = createReducer(initialState, {
     return {
       ...state,
       updating: false,
+      error: action.data.error,
+    }
+  },
+  [REMOVE_PACKAGE_REQUEST](state, action) {
+    return {
+      ...state,
+      pending: true,
+      error: null,
+    }
+  },
+  [REMOVE_PACKAGE_SUCCESS](state, action) {
+    const data = _.filter(state.data, e => (e.id !== action.data.id))
+    return {
+      ...state,
+      pending: false,
+      error: null,
+      data,
+    }
+  },
+  [REMOVE_PACKAGE_FAILURE](state, action) {
+    return {
+      ...state,
+      pending: false,
       error: action.data.error,
     }
   },

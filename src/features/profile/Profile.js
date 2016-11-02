@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { PackageList } from '../../components'
-import { fetchPackage } from './redux/package'
+import { fetchPackage, removePackge } from './redux/package'
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -20,7 +20,10 @@ export default class Profile extends Component {
         <h1>
           <span>Your Package.json</span>
         </h1>
-        <PackageList list={_.sortBy(packages.data, e => (-e.updatedAt))} prefix={prefix} />
+        <PackageList
+          list={_.sortBy(packages.data, e => (-e.updatedAt))}
+          prefix={prefix}
+        />
       </div>
     )
   }
