@@ -3,6 +3,10 @@ var webpack = require('webpack')
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var HtmlWebpackPlugin = require('html-webpack-plugin')
 module.exports = {
+  node: {
+    fs: "empty",
+    net: "empty"
+  },
   entry: {
     app: [
       'webpack-hot-middleware/client',
