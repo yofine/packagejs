@@ -55,23 +55,13 @@ module.exports = {
         minifyURLs: true
       }
     }),
-    new webpack.ProvidePlugin({
-      'Promise': 'exports?global.Promise!es6-promise',
-      'fetch': 'exports?self.fetch!whatwg-fetch'
-    }),
     new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin(),
     new ExtractTextPlugin("css/[name].css"),
+    new webpack.optimize.UglifyJsPlugin({ compress: { warnings: false } }) } })
     new webpack.ResolverPlugin([
       new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin("package.json", ["main"]),
     ]),
-    new webpack.DefinePlugin({
-      ENV: '"dev"',
-      'process.env': {
-        NODE_ENV: JSON.stringify('dev'),
-      }
-    }),
   ],
   module: {
     loaders: [
@@ -82,6 +72,10 @@ module.exports = {
       {
         test: /\.css$/,
         loader:  ExtractTextPlugin.extract('style-loader', 'css-loader')
+      },
+      {
+        test: /\.less$/,
+        loader:  "style-loader!css-loader!less-loader"
       },
       {
         test: /\.json$/,
