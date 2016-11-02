@@ -9,7 +9,6 @@ module.exports = {
   },
   entry: {
     app: [
-      'webpack-hot-middleware/client',
       'babel-polyfill',
       './src/index',
     ],
